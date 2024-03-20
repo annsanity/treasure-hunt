@@ -1,0 +1,72 @@
+#game-board {
+  border-collapse: collapse;
+  width: 400px;
+  height: 400px;
+  background-color: lightgreen;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0 auto;
+}
+
+#game-board td {
+  width: 40px;
+  height: 40px;
+  border: 0.5px solid #000;
+  background-color: lightgreen;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+
+#controls {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.hunter {
+  color: blue;
+}
+
+.treasure {
+  color: yellow;
+}
+
+.obstacle {
+  color: red;
+}
+
+/* Background image from https://wallpaper.mob.org/pc/image/video_game-len_s_island-1052382.html */
+body {
+  background-image: url('video_game-len_s_island-1052382.jpeg');
+}
+
+#status-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  position: fixed;
+  left: 10%;
+  top: 40%;
+  /* to move an element vertically relative to its original position. */
+  transform: translateY(-50%);
+}
+
+@media only screen and (max-width: 600px) {
+  #game-board {
+    width: 300px;
+    height: 300px;
+  }
+
+  #game-board td {
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+  }
+
+  #status-container {
+    width: auto;
+    left: 10px;
+  }
+}

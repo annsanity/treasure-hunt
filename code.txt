@@ -1,0 +1,208 @@
+const gridSize = 10;
+const grid = [];
+let gameState = 'setup';
+let playerPosition = null;
+let treasures = {
+  5: 0,
+  6: 0,
+  7: 0,
+  8: 0
+};
+let score = 0;
+let rounds = 0;
+
+// Initialize the grid
+for (let i = 0; i < gridSize; i++) {
+  grid[i] = new Array(gridSize).fill(null);
+}
+
+// Get DOM elements
+const gameBoard = document.getElementById('game-board');
+const endSetupBtn = document.getElementById('end-setup-btn');
+const playBtn = document.getElementById('play-btn');
+const endBtn = document.getElementById('end-btn');
+// const roundsDisplay = document.getElementById('rounds');
+// const treasuresDisplay = {
+//   5: document.getElementById('treasures-5'),
+//   6: document.getElementById('treasures-6'),
+//   7: document.getElementById('treasures-7'),
+//   8: document.getElementById('treasures-8')
+// };
+// const scoreDisplay = document.getElementById('score');
+
+// Render the game board
+function renderGameBoard() {
+  gameBoard.innerHTML = '';
+  for (let i = 0; i < gridSize; i++) {
+    const row = gameBoard.insertRow();
+    for (let j = 0; j < gridSize; j++) {
+      const cell = row.insertCell();
+      cell.setAttribute('data-row', i);
+      cell.setAttribute('data-col', j);
+      if (gameState === 'setup') {
+        cell.addEventListener('click', handleSetupClick);
+      }
+    }
+  }
+}
+
+// Handle setup click
+function handleSetupClick(e) {
+  const cell = e.target;
+  const row = parseInt(cell.getAttribute('data-row'));
+  const col = parseInt(cell.getAttribute('data-col'));
+
+  if (isNaN(row) || isNaN(col)) {
+    alert('Invalid cell!');
+    return;
+  }
+
+  const value = prompt('Enter a value (5-8 for treasure, "o" for obstacle, "h" for hunter)');
+
+  if (grid[row][col] !== null) {
+    alert('Cell already occupied!');
+    return;
+  }
+
+  if (value >= 5 && value <= 8) {
+    // Place a treasure on the grid
+    grid[row][col] = parseInt(value);
+    cell.textContent = value;
+    cell.classList.add('treasure');
+    treasures[value]++;
+  } else if (value === 'o') {
+    // Place an obstacle on the grid
+    grid[row][col] = 'obstacle';
+    cell.textContent = 'O';
+    cell.classList.add('obstacle');
+  } else if (value === 'h') {
+    // Place the hunter on the grid
+    if (playerPosition) {
+      alert('Hunter already placed!');
+    } else {
+      grid[row][col] = 'hunter';
+      cell.textContent = 'H';
+      cell.classList.add('hunter');
+      playerPosition = { row, col };
+    }
+  } else {
+    alert('Invalid input!');
+  }
+
+}
+
+function createStatusDisplay() {
+  const statusContainer = document.createElement('div');
+  statusContainer.id = 'status-container';
+  statusContainer.innerHTML = `
+    <p>Rounds: <span id="rounds">0</span></p>
+    <p>Treasures left:</p>
+    <ul>
+      <li>Value 5: <span id="treasures-5">0</span></li>
+      <li>Value 6: <span id="treasures-6">0</span></li>
+      <li>Value 7: <span id="treasures-7">0</span></li>
+      <li>Value 8: <span id="treasures-8">0</span></li>
+    </ul>
+    <p>Score: <span id="score">0</span></p>
+  `;
+  document.body.appendChild(statusContainer);
+}
+
+function updateStatusDisplay() {
+  const roundsDisplay = document.getElementById('rounds');
+  const scoreDisplay = document.getElementById('score');
+  const treasuresDisplay = {
+      5: document.getElementById('treasures-5'),
+      6: document.getElementById('treasures-6'),
+      7: document.getElementById('treasures-7'),
+      8: document.getElementById('treasures-8')
+    };
+  roundsDisplay.textContent = rounds;
+  for (const value in treasures) {
+    treasuresDisplay[value].textContent = treasures[value];
+  }
+  scoreDisplay.textContent = score;
+}
+
+// Setup event listeners
+endSetupBtn.addEventListener('click', () => {
+  gameState = 'setup';
+  if(playerPosition === null) {
+    alert('Please place the hunter first!');
+    return;
+  }
+  createStatusDisplay()
+  updateStatusDisplay();
+});
+
+playBtn.addEventListener('click', () => {
+  if (!playerPosition) {
+    alert('Please place the hunter first!');
+    return;
+  }
+
+  gameState = 'play';
+  // Add event listener for player movement
+});
+
+endBtn.addEventListener('click', () => {
+  gameState = 'end';
+  // Calculate and display performance index
+});
+
+// Render initial game board
+renderGameBoard();
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Treasure Hunter Game</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="game-container">
+    <table id="game-board">
+      <!-- Table rows will be dynamically created in JavaScript -->
+    </table>
+    <div id="controls">
+      <button id="end-setup-btn">End Setup</button>
+      <button id="play-btn" disabled>Play</button>
+      <button id="end-btn" disabled>End Game</button>
+    </div>
+  </div>
+  <script src="treasures.js"></script>
+</body>
+</html>
+#game-board {
+  border-collapse: collapse;
+  width: 400px;
+  height: 400px;
+  background-color: #ddd;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+#game-board td {
+  width: 40px;
+  height: 40px;
+  border: 0.5px solid #000;
+  background-color: #fff;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.hunter {
+  color: blue;
+}
+
+.treasure {
+  color: yellow;
+}
+
+.obstacle {
+  color: red;
+}
